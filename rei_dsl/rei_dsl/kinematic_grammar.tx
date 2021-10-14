@@ -1,0 +1,78 @@
+KinematicModel: Robot;
+
+
+
+Robot:
+    'robot' name=ID
+"{"
+    ('parameters' '{'
+        (params*= Parameter)*
+    '}')?
+    'templates' '{' templates*=Template '}'
+    'elements' '{' elements*=AbstractElement '}'
+'}';
+
+Parameter: FloatParameter | IntParameter;
+
+IntParameter: name=ID value=INT;
+FloatParameter: name=ID value=FLOAT;
+
+
+AbstractElement: TemplateInstantiation | KinematicElement;
+
+Template: 'template' name=ID '{'
+    'elements' '{' elements*=KinematicElement '}'
+'}';
+
+TemplateInstantiation: 'use' name=ID ':' basetemplate=[Template|ID] origin_link=[KinematicLink|ID]'->' origin=Transform;
+
+KinematicElement: KinematicLink | KinematicJoint;
+
+Vector3:
+    '(' x=FLOAT ',' y=FLOAT ',' z=FLOAT ')';
+
+Rpy:
+    '(' roll=FLOAT ',' pitch=FLOAT ',' yaw=FLOAT ')';
+
+Transform: (translate=Vector3)? ',' (rotation=Rpy)?;
+
+KinematicLink: 'link' name=ID '{'
+    (inertia*=Inertial)*
+    (body*=AbstractBody)*
+'}';
+
+AbstractBody: ReuseBody | Body;
+
+ReuseBody: 'reuse' body_type=BODY_TYPE template=[Body|ID];
+
+Inertial: 'inertia' mass=FLOAT
+    (inertia_matrix='[' ixx=FLOAT ',' ixy=FLOAT ',' ixz=FLOAT ',' iyy=FLOAT ',' iyz=FLOAT ',' izz=FLOAT ']')? ('->' origin=Transform)?;
+
+Body: 'body' body_type=BODY_TYPE name=ID '{'
+    ('origin' origin=Transform)?
+    (geometry=Geometry)?
+'}';
+
+Geometry: Mesh | Sphere | Cube | Cylinder;
+
+Mesh: 'mesh' path=STRING;
+Sphere: 'sphere' '(' radius=FLOAT ')';
+Cube: 'cube' '(' x=FLOAT ',' y=FLOAT ',' z=FLOAT ')';
+Cylinder: 'cylinder' '(' radius=FLOAT ',' height=FLOAT ')';
+
+BODY_TYPE: 'collision' | 'visual';
+
+
+
+KinematicJoint: 'joint' name=ID ':' parent=[KinematicLink|ID] '->'  child=[KinematicLink|ID] (':' axis=Axis)? '{'
+    ('type' type=JOINT_TYPE)?
+    ('origin' origin=Transform)?
+'}';
+
+Axis: '[' x=INT ',' y=INT ',' z=INT ']';
+
+JOINT_TYPE: 'FIXED' | 'REVOLUTE' | 'PRISMATIC' | 'CONTINUOUS';
+
+Comment:
+  /\/\/.*$/
+;

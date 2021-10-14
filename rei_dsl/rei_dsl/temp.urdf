@@ -1,0 +1,137 @@
+<robot name="basic_robot">
+  <link name="base_link">
+    <visual>
+      <origin xyz="-0.25 0.0 0.0"/>
+      <geometry>
+        <box size="0.5 0.2 0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0.25 0.0 0.0"/>
+      <geometry>
+        <box size="0.5 0.2 0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="right_wheel_wheel_axle">
+    <visual>
+      <geometry>
+        <cylinder radius="0.025" length="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.025" length="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="right_wheel_wheel_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.2" length="0.1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.2" length="0.1"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="left_wheel_wheel_axle">
+    <visual>
+      <geometry>
+        <cylinder radius="0.025" length="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.025" length="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="left_wheel_wheel_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.2" length="0.1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.2" length="0.1"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="caster_wheel_caster_root">
+    <visual>
+      <geometry>
+        <cylinder radius="0.025" length="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.025" length="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="caster_wheel_caster_wheel_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.2" length="0.1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.2" length="0.1"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="caster_wheel_tire_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.2" length="0.1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.2" length="0.1"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_wheel_jnt_left_wheel" type="continuous">
+    <parent link="right_wheel_wheel_axle"/>
+    <child link="right_wheel_wheel_link"/>
+    <axis xyz="0 0 1"/>
+    <origin xyz="0.0 0.0 0.05" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <joint name="jnt_right_wheel_connect" type="fixed">
+    <parent link="base_link"/>
+    <child link="right_wheel_wheel_axle"/>
+    <origin xyz="0.0 -0.2 -0.05" rpy="1.5707963267948966 0.0 0.0"/>
+  </joint>
+  <joint name="left_wheel_jnt_left_wheel" type="continuous">
+    <parent link="left_wheel_wheel_axle"/>
+    <child link="left_wheel_wheel_link"/>
+    <axis xyz="0 0 1"/>
+    <origin xyz="0.0 0.0 0.05" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <joint name="jnt_left_wheel_connect" type="fixed">
+    <parent link="base_link"/>
+    <child link="left_wheel_wheel_axle"/>
+    <origin xyz="0.0 0.2 -0.05" rpy="-1.5707963267948966 0.0 0.0"/>
+  </joint>
+  <joint name="caster_wheel_jnt_caster_root" type="continuous">
+    <parent link="caster_wheel_caster_root"/>
+    <child link="caster_wheel_caster_wheel_link"/>
+    <origin xyz="0.0 0.0 0.05" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <joint name="caster_wheel_jnt_caster_tire" type="continuous">
+    <parent link="caster_wheel_caster_wheel_link"/>
+    <child link="caster_wheel_tire_link"/>
+    <origin xyz="0.0 0.0 0.05" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <joint name="jnt_caster_wheel_connect" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster_wheel_caster_root"/>
+    <origin xyz="-0.3 0.0 0.0" rpy="0.0 1.5707963267948966 0.0"/>
+  </joint>
+</robot>
