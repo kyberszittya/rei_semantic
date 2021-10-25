@@ -8,7 +8,7 @@ Robot:
     ('parameters' '{'
         (params*= Parameter)*
     '}')?
-    'templates' '{' templates*=Template '}'
+    ('templates' '{' templates*=Template '}')?
     'elements' '{' elements*=AbstractElement '}'
 '}';
 
@@ -46,7 +46,10 @@ AbstractBody: ReuseBody | Body;
 ReuseBody: 'reuse' body_type=BODY_TYPE template=[Body|ID];
 
 Inertial: 'inertia' mass=FLOAT
-    (inertia_matrix='[' ixx=FLOAT ',' ixy=FLOAT ',' ixz=FLOAT ',' iyy=FLOAT ',' iyz=FLOAT ',' izz=FLOAT ']')? ('->' origin=Transform)?;
+    (inertia_matrix=InertiaMatrix)? ('->' origin=Transform)?;
+
+InertiaMatrix:
+    '[' ixx=FLOAT ',' ixy=FLOAT ',' ixz=FLOAT ',' iyy=FLOAT ',' iyz=FLOAT ',' izz=FLOAT ']';
 
 Body: 'body' body_type=BODY_TYPE name=ID '{'
     ('origin' origin=Transform)?
@@ -65,9 +68,15 @@ BODY_TYPE: 'collision' | 'visual';
 
 
 KinematicJoint: 'joint' name=ID ':' parent=[KinematicLink|ID] '->'  child=[KinematicLink|ID] (':' axis=Axis)? '{'
-    ('type' type=JOINT_TYPE)?
+    ('type' joint_type=JOINT_TYPE)?
+    ('limit' limit=JointLimit)?
+    ('control' control_type=CONTROL_TYPE)?
     ('origin' origin=Transform)?
 '}';
+
+JointLimit: '[' lower=FLOAT ';' upper=FLOAT ']';
+
+CONTROL_TYPE: 'POSITION' | 'VELOCITY' | 'TORQUE';
 
 Axis: '[' x=INT ',' y=INT ',' z=INT ']';
 

@@ -9,10 +9,12 @@ import pybullet_data
 import time
 import math
 
+
 class KinematicLink(object):
-    def __init__(self, name, body):
+    def __init__(self, name, body, inertia):
         self.name = name
         self.body = body
+        self.inertia = inertia
 
 
 class Translate(object):
@@ -36,13 +38,18 @@ class Transform(object):
 
 
 class KinematicJoint(object):
-    def __init__(self, name, parent, child, axis, joint_type, origin):
+    def __init__(self, name, parent, child, axis, joint_type, origin, control_type, limit):
         self.name = name
         self.parent = parent
         self.child = child
         self.axis = axis
         self.joint_type = joint_type.lower()
         self.origin = origin
+        self.control_type = control_type
+        self.limit = limit
+
+    def set_joint_idx(self, i):
+        self.idx = i
 
 
 class Robot(object):
@@ -54,27 +61,32 @@ class Robot(object):
         # Link-Joint structure
         self.links = {}
         self.joints = {}
+        self.controlled_joints = {}
 
     def add_link(self, name, lk):
-        link = KinematicLink(lk.name, lk.body)
+        link = KinematicLink(lk.name, lk.body, lk.inertia)
         self.links[name] = link
 
     def add_joint(self, name, jnt):
         orig = Transform(jnt.origin.translate, jnt.origin.rotation)
+        print(jnt)
         j = KinematicJoint(name,
                            self.links[jnt.parent.name],
                            self.links[jnt.child.name],
                            jnt.axis,
-                           jnt.joint_type, orig)
+                           jnt.joint_type, orig, jnt.control_type, jnt.limit)
+        if jnt.control_type is not None:
+            print(jnt.control_type)
+            self.controlled_joints[name] = j
         self.joints[name] = j
 
     def __str__(self):
         return "{},{}".format(self.name)
 
 
-
 def deg_rad(deg: float):
     return math.pi*deg/180.0
+
 
 def geometry_to_urdf(body, body_link_element):
     if body.origin is not None:
@@ -95,6 +107,7 @@ def geometry_to_urdf(body, body_link_element):
         geom_element.attrib["radius"] = f"{body.geometry.radius}"
         geom_element.attrib["length"] = f"{body.geometry.height}"
 
+
 def robot_to_urdf(robot):
     urdf_root = etree.Element("robot", name=f"{robot.name}")
     # Add links
@@ -104,9 +117,9 @@ def robot_to_urdf(robot):
         # Set base geometries
         for body in filter(lambda x: not x.__class__.__name__ == "ReuseBody", link.body):
             body_link_element = None
-            if body.body_type=="visual":
+            if body.body_type == "visual":
                 body_link_element = etree.SubElement(link_element, "visual")
-            elif body.body_type=="collision":
+            elif body.body_type == "collision":
                 body_link_element = etree.SubElement(link_element, "collision")
             geometry_to_urdf(body, body_link_element)
         # Set reuse geometries
@@ -117,6 +130,28 @@ def robot_to_urdf(robot):
             elif body.body_type=="collision":
                 body_link_element = etree.SubElement(link_element, "collision")
             geometry_to_urdf(body.template, body_link_element)
+        # Add inertia
+        for inertia in filter(lambda x: x.__class__.__name__ == "Inertial", link.inertia):
+            inertial_element = etree.SubElement(link_element, "inertial")
+            mass_element = etree.SubElement(inertial_element, "mass")
+            mass_element.attrib["value"] = str(inertia.mass)
+            inertia_matrix_element = etree.SubElement(inertial_element, "inertia")
+            print(inertia.inertia_matrix)
+            if inertia.inertia_matrix is None:
+                inertia_matrix_element.attrib["ixx"] = str(1.0)
+                inertia_matrix_element.attrib["ixy"] = str(0.0)
+                inertia_matrix_element.attrib["iyy"] = str(1.0)
+                inertia_matrix_element.attrib["izz"] = str(1.0)
+                inertia_matrix_element.attrib["ixz"] = str(0.0)
+                inertia_matrix_element.attrib["iyz"] = str(0.0)
+            else:
+                inertia_matrix_element.attrib["ixx"] = str(inertia.inertia_matrix.ixx)
+                inertia_matrix_element.attrib["ixy"] = str(inertia.inertia_matrix.ixy)
+                inertia_matrix_element.attrib["iyy"] = str(inertia.inertia_matrix.iyy)
+                inertia_matrix_element.attrib["izz"] = str(inertia.inertia_matrix.izz)
+                inertia_matrix_element.attrib["ixz"] = str(inertia.inertia_matrix.ixz)
+                inertia_matrix_element.attrib["iyz"] = str(inertia.inertia_matrix.iyz)
+
     # Add joints
     for joint in robot.joints.values():
         joint_element = etree.SubElement(urdf_root, "joint")
@@ -136,9 +171,12 @@ def robot_to_urdf(robot):
                 f"{joint.origin.translate.x} {joint.origin.translate.y} {joint.origin.translate.z}"
             origin_element.attrib["rpy"] = \
                 f"{deg_rad(joint.origin.rotation.roll)} {deg_rad(joint.origin.rotation.pitch)} {deg_rad(joint.origin.rotation.yaw)}"
+        if joint.limit is not None:
+            joint_element = etree.SubElement(joint_element, "limit")
+            joint_element.attrib["lower"] = str(deg_rad(joint.limit.lower))
+            joint_element.attrib["upper"] = str(deg_rad(joint.limit.upper))
     # return XML root
     return urdf_root
-
 
 
 def instantiate_template(template_use, robot):
@@ -147,14 +185,15 @@ def instantiate_template(template_use, robot):
     for elem in filter(lambda x: x.__class__.__name__ == "KinematicLink", template_use.basetemplate.elements):
         # robot.add_link(elem.name, elem)
         link_name = f"{template_use.name}_{elem.name}"
-        l = KinematicLink(link_name, elem.body)
+        l = KinematicLink(link_name, elem.body, elem.inertia)
         links[l.name] = l
         old_links[elem.name] = l
     joints = {}
     for elem in filter(lambda x: x.__class__.__name__ == "KinematicJoint", template_use.basetemplate.elements):
         # robot.add_link(elem.name, elem)
         joint_name = f"{template_use.name}_{elem.name}"
-        j = KinematicJoint(joint_name, old_links[elem.parent.name], old_links[elem.child.name], elem.axis, elem.type, elem.origin)
+        j = KinematicJoint(joint_name, old_links[elem.parent.name], old_links[elem.child.name], elem.axis, elem.joint_type,
+                           elem.origin, elem.control_type, elem.limit)
         joints[j.name] = j
     # Select root node
     parent_links = set(links.keys())
@@ -163,75 +202,15 @@ def instantiate_template(template_use, robot):
     # Setup connecting joint
     origin_joint = KinematicJoint(f"jnt_{template_use.name}_connect",
                                   robot.links[template_use.origin_link.name], links[list(parent_links).pop()],
-                                  None, "FIXED", template_use.origin)
+                                  None, "FIXED", template_use.origin, None, None)
     joints[origin_joint.name] = origin_joint
     return links, joints
 
 
-def main():
+def load_robot_from_file(path):
     f = open('kinematic_grammar.tx', 'r')
     mm = metamodel_from_str(''.join(f.readlines()), classes=[Robot])
-    model_str = """
-    robot basic_robot 
-    {
-        templates {
-            template wheel { 
-                elements {
-                    link wheel_axle {
-                        body visual viz_wheel_axle { cylinder (0.025, 0.05) }
-                        reuse collision viz_wheel_axle
-                    }
-                    joint jnt_left_wheel : wheel_axle->wheel_link: [0,0,1] { 
-                        type CONTINUOUS
-                        origin (0.0, 0.0, 0.05), (0.0,0.0,0.0) 
-                    }
-                    link wheel_link {
-                        body visual viz_wheel_link { cylinder (0.2, 0.1) }
-                        reuse collision viz_wheel_link
-                    }
-                }
-            }
-            template Caster_wheel {
-                elements {
-                    link caster_root {
-                        body visual viz_leftwheel_axle { cylinder (0.025, 0.05) }
-                        reuse collision viz_leftwheel_axle
-                    }
-                    joint jnt_caster_root : caster_root->caster_wheel_link { 
-                        type CONTINUOUS
-                        origin (0.0, 0.0, 0.05), (0.0,0.0,0.0) 
-                    }
-                    link caster_wheel_link {
-                        body visual viz_caster_wheel_link { cylinder (0.2, 0.1) }
-                        reuse collision viz_caster_wheel_link
-                    }
-                    joint jnt_caster_tire : caster_wheel_link->tire_link { 
-                        type CONTINUOUS
-                        origin (0.0, 0.0, 0.05), (0.0,0.0,0.0) 
-                    }
-                    link tire_link {
-                        body visual viz_tire_link { cylinder (0.2, 0.1) }
-                        reuse collision viz_tire_link
-                    }
-                }
-            }
-        }
-        elements {
-            
-            link base_link {
-                body visual viz_base_link {
-                    origin (-0.25, 0.0, 0.0),
-                    cube (0.5, 0.2, 0.05) 
-                }
-                reuse collision viz_base_link           
-            }
-            
-            use right_wheel: wheel base_link -> (0,-0.2, -0.05),(90.0,0.0,0.0)
-            use left_wheel:  wheel base_link -> (0, 0.2, -0.05),(-90.0,0.0,0.0)
-            use caster_wheel: Caster_wheel base_link -> (-0.3, 0.0, 0.0),(0.0, 90.0, 0.0)
-        }
-    }
-    """
+    model_str = open(path, "r").read()
     robot: Robot
     robot = mm.model_from_str(model_str)
     # Add template
@@ -251,17 +230,5 @@ def main():
     print(etree.tostring(urdf, pretty_print=True, encoding="unicode"))
     with open("temp.urdf", "w") as f:
         f.writelines(etree.tostring(urdf, pretty_print=True, encoding="unicode"))
-    physicsClient = pb.connect(pb.GUI)
-    pb.setAdditionalSearchPath(pybullet_data.getDataPath())
-    pb.setGravity(0, 0, -10)
-    planeId = pb.loadURDF("plane.urdf")
-    startPos = [0, 0, 1]
-    startOrientation = pb.getQuaternionFromEuler([0, 0, 0])
-    pb.loadURDF("temp.urdf", startPos, startOrientation)
-    for i in range(10000):
-        pb.stepSimulation()
-        time.sleep(1. / 240.)
+    return robot, urdf
 
-
-if __name__ == '__main__':
-    main()
