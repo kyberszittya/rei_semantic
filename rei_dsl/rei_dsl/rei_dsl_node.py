@@ -208,7 +208,7 @@ def instantiate_template(template_use, robot):
 
 
 def load_robot_from_file(path):
-    f = open('kinematic_grammar.tx', 'r')
+    f = open('grammar/kinematic_grammar.tx', 'r')
     mm = metamodel_from_str(''.join(f.readlines()), classes=[Robot])
     model_str = open(path, "r").read()
     robot: Robot

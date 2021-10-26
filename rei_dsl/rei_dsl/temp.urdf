@@ -1,125 +1,222 @@
-<robot name="basic_anthropomorph">
+<robot name="cyberdisc">
   <link name="base_link">
     <visual>
-      <origin xyz="0.0 0.0 0.15"/>
       <geometry>
-        <cylinder radius="0.2" length="0.3"/>
+        <cylinder radius="0.25" length="0.05"/>
       </geometry>
     </visual>
     <collision>
-      <origin xyz="0.0 0.0 0.15"/>
       <geometry>
-        <cylinder radius="0.2" length="0.3"/>
+        <cylinder radius="0.25" length="0.05"/>
       </geometry>
     </collision>
-    <inertial>
-      <mass value="10.0"/>
-      <inertia ixx="1.0" ixy="0.0" iyy="1.0" izz="1.0" ixz="0.0" iyz="0.0"/>
-    </inertial>
   </link>
-  <link name="shoulder_link">
+  <link name="motor_0_motor_root">
     <visual>
-      <origin xyz="0.0 0.0 0.3"/>
       <geometry>
-        <cylinder radius="0.15" length="0.1"/>
+        <box size="0.08 0.04 0.03"/>
       </geometry>
     </visual>
     <collision>
-      <origin xyz="0.0 0.0 0.3"/>
       <geometry>
-        <cylinder radius="0.15" length="0.1"/>
+        <box size="0.08 0.04 0.03"/>
       </geometry>
     </collision>
   </link>
-  <link name="arm_link">
+  <link name="motor_0_motor_axle">
     <visual>
-      <origin xyz="0.0 0.0 0.3"/>
       <geometry>
-        <cylinder radius="0.1" length="0.6"/>
+        <cylinder radius="0.005" length="0.07"/>
       </geometry>
     </visual>
     <collision>
-      <origin xyz="0.0 0.0 0.3"/>
       <geometry>
-        <cylinder radius="0.1" length="0.6"/>
+        <cylinder radius="0.005" length="0.07"/>
       </geometry>
     </collision>
   </link>
-  <link name="wrist_link1">
+  <link name="motor_0_wheel_link">
     <visual>
-      <origin xyz="0.0 0.0 0.1"/>
       <geometry>
-        <cylinder radius="0.1" length="0.1"/>
+        <cylinder radius="0.04" length="0.02"/>
       </geometry>
     </visual>
     <collision>
-      <origin xyz="0.0 0.0 0.1"/>
       <geometry>
-        <cylinder radius="0.1" length="0.1"/>
+        <cylinder radius="0.04" length="0.02"/>
       </geometry>
     </collision>
   </link>
-  <link name="wrist_link2">
+  <link name="motor_1_motor_root">
     <visual>
-      <origin xyz="0.0 0.0 0.15"/>
       <geometry>
-        <cylinder radius="0.1" length="0.1"/>
+        <box size="0.08 0.04 0.03"/>
       </geometry>
     </visual>
     <collision>
-      <origin xyz="0.0 0.0 0.15"/>
       <geometry>
-        <cylinder radius="0.1" length="0.1"/>
+        <box size="0.08 0.04 0.03"/>
       </geometry>
     </collision>
   </link>
-  <link name="wrist_link3">
+  <link name="motor_1_motor_axle">
     <visual>
-      <origin xyz="0.0 0.0 0.15"/>
       <geometry>
-        <cylinder radius="0.1" length="0.3"/>
+        <cylinder radius="0.005" length="0.07"/>
       </geometry>
     </visual>
     <collision>
-      <origin xyz="0.0 0.0 0.15"/>
       <geometry>
-        <cylinder radius="0.1" length="0.1"/>
+        <cylinder radius="0.005" length="0.07"/>
       </geometry>
     </collision>
   </link>
-  <joint name="jnt_base_shoulder" type="revolute">
+  <link name="motor_1_wheel_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.04" length="0.02"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.04" length="0.02"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="motor_2_motor_root">
+    <visual>
+      <geometry>
+        <box size="0.08 0.04 0.03"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.08 0.04 0.03"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="motor_2_motor_axle">
+    <visual>
+      <geometry>
+        <cylinder radius="0.005" length="0.07"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.005" length="0.07"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="motor_2_wheel_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.04" length="0.02"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.04" length="0.02"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="motor_3_motor_root">
+    <visual>
+      <geometry>
+        <box size="0.08 0.04 0.03"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.08 0.04 0.03"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="motor_3_motor_axle">
+    <visual>
+      <geometry>
+        <cylinder radius="0.005" length="0.07"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.005" length="0.07"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="motor_3_wheel_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.04" length="0.02"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.04" length="0.02"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="motor_0_jnt_motor" type="fixed">
+    <parent link="motor_0_motor_root"/>
+    <child link="motor_0_motor_axle"/>
+    <origin xyz="0.04 0.0 0.0" rpy="0.0 1.5707963267948966 0.0"/>
+  </joint>
+  <joint name="motor_0_jnt_motor_wheel" type="continuous">
+    <parent link="motor_0_motor_axle"/>
+    <child link="motor_0_wheel_link"/>
+    <axis xyz="0 0 1"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <joint name="jnt_motor_0_connect" type="fixed">
     <parent link="base_link"/>
-    <child link="shoulder_link"/>
+    <child link="motor_0_motor_root"/>
+    <origin xyz="0.1 0.1 0.0" rpy="0.0 0.0 1.5707963267948966"/>
+  </joint>
+  <joint name="motor_1_jnt_motor" type="fixed">
+    <parent link="motor_1_motor_root"/>
+    <child link="motor_1_motor_axle"/>
+    <origin xyz="0.04 0.0 0.0" rpy="0.0 1.5707963267948966 0.0"/>
+  </joint>
+  <joint name="motor_1_jnt_motor_wheel" type="continuous">
+    <parent link="motor_1_motor_axle"/>
+    <child link="motor_1_wheel_link"/>
     <axis xyz="0 0 1"/>
-    <origin xyz="0.0 0.0 0.1" rpy="0.0 0.0 0.0"/>
-    <limit lower="-3.141592653589793" upper="3.141592653589793"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
   </joint>
-  <joint name="jnt_shoulder_arm" type="revolute">
-    <parent link="shoulder_link"/>
-    <child link="arm_link"/>
-    <axis xyz="1 0 0"/>
-    <origin xyz="0.0 0.0 0.15" rpy="0.0 0.0 0.0"/>
-    <limit lower="-2.0943951023931953" upper="2.0943951023931953"/>
+  <joint name="jnt_motor_1_connect" type="fixed">
+    <parent link="base_link"/>
+    <child link="motor_1_motor_root"/>
+    <origin xyz="-0.1 0.1 0.0" rpy="0.0 0.0 1.5707963267948966"/>
   </joint>
-  <joint name="jnt_arm_wrist" type="revolute">
-    <parent link="arm_link"/>
-    <child link="wrist_link1"/>
-    <axis xyz="1 0 0"/>
-    <origin xyz="0.0 0.0 0.6" rpy="0.0 0.0 0.0"/>
-    <limit lower="-2.0943951023931953" upper="2.0943951023931953"/>
+  <joint name="motor_2_jnt_motor" type="fixed">
+    <parent link="motor_2_motor_root"/>
+    <child link="motor_2_motor_axle"/>
+    <origin xyz="0.04 0.0 0.0" rpy="0.0 1.5707963267948966 0.0"/>
   </joint>
-  <joint name="jnt_wrist1_wrist2" type="revolute">
-    <parent link="wrist_link1"/>
-    <child link="wrist_link2"/>
+  <joint name="motor_2_jnt_motor_wheel" type="continuous">
+    <parent link="motor_2_motor_axle"/>
+    <child link="motor_2_wheel_link"/>
     <axis xyz="0 0 1"/>
-    <origin xyz="0.0 0.0 0.075" rpy="0.0 0.0 0.0"/>
-    <limit lower="-2.0943951023931953" upper="2.0943951023931953"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
   </joint>
-  <joint name="jnt_wrist2_wrist3" type="revolute">
-    <parent link="wrist_link2"/>
-    <child link="wrist_link3"/>
-    <axis xyz="1 0 0"/>
-    <origin xyz="0.0 0.0 0.075" rpy="0.0 0.0 0.0"/>
-    <limit lower="-2.0943951023931953" upper="2.0943951023931953"/>
+  <joint name="jnt_motor_2_connect" type="fixed">
+    <parent link="base_link"/>
+    <child link="motor_2_motor_root"/>
+    <origin xyz="-0.1 -0.1 0.0" rpy="0.0 0.0 -1.5707963267948966"/>
+  </joint>
+  <joint name="motor_3_jnt_motor" type="fixed">
+    <parent link="motor_3_motor_root"/>
+    <child link="motor_3_motor_axle"/>
+    <origin xyz="0.04 0.0 0.0" rpy="0.0 1.5707963267948966 0.0"/>
+  </joint>
+  <joint name="motor_3_jnt_motor_wheel" type="continuous">
+    <parent link="motor_3_motor_axle"/>
+    <child link="motor_3_wheel_link"/>
+    <axis xyz="0 0 1"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <joint name="jnt_motor_3_connect" type="fixed">
+    <parent link="base_link"/>
+    <child link="motor_3_motor_root"/>
+    <origin xyz="0.1 -0.1 0.0" rpy="0.0 0.0 -1.5707963267948966"/>
   </joint>
 </robot>
