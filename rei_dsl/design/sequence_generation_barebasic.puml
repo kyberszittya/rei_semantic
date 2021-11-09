@@ -1,0 +1,77 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+mainframe **seq** Basic description format generation process
+-> Program: generate()
+activate Program
+create Generator
+Program -> Generator: << instantiate generator >>
+
+Program -> Generator: setup()
+activate Generator
+create mm
+Generator -> mm: metamodel_from_str(path)
+deactivate Generator
+Program -> Generator: load_description(description_path)
+activate Generator
+Generator -> Generator: model_str = open(description_path)
+activate Generator
+deactivate Generator
+Generator -> mm: model_from_str(model_str)
+activate mm
+create Robot
+mm -> Robot: <<create>>
+return Robot
+' Add kinematic links
+deactivate mm
+loop elem over self.robot.elements if elem is KinematicLink
+
+    Generator->Robot: add_link(elem.name, elem)
+    activate Robot
+    deactivate Robot
+end
+' Add kinematic joints
+loop elem over self.robot.elements if elem is KinematicJoint
+    Generator->Robot: add_joint(elem.name, elem)
+    activate Robot
+    deactivate Robot
+end
+' Add templates kinmeatic elements
+loop template over self.robot.elements if elem is TemplateInstantiation
+    Generator -> Generator: instantiate_template(template, Robot)
+    activate Generator
+    return links: {dict}, joints: {dict}
+    ' Add template links
+    loop l over links if elem is KinematicLink
+        Generator->Robot: add_link(l, links[l])
+        activate Robot
+        deactivate Robot
+    end
+    ' Add template joints
+    loop j over joints if elem is KinematicJoint
+        Generator->Robot: add_joint(j, joints[j])
+        activate Robot
+        deactivate Robot
+    end
+    activate Robot
+    deactivate Robot
+end
+' Save file
+deactivate Generator
+Program -> Generator: save_format_to_file(output_path)
+activate Generator
+create f
+Generator -> f: open(output_path)
+
+Generator -> Generator: model_to_text()
+activate Generator
+return text
+Generator -> f: writelines(text)
+activate f
+deactivate f
+destroy f
+return
+deactivate Program
+
+@enduml

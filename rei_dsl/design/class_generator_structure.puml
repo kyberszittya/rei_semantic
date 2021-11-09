@@ -1,0 +1,26 @@
+@startuml
+'https://plantuml.com/class-diagram
+mainframe **class** Generator elements
+
+abstract AbstractRobotFormatGenerator {
+    -mm: textx.metamodel
+    -robot: rei_dsl.Robot
+    #{abstract}generate_geometry(body, body_link_element)
+    +{abstract}generate_format(): format
+    +{abstract}model_to_text(): String
+    #instantiate_template(template_instance, target: rei_dsl.Robot)
+    +save_format_to_file(path: String)
+    +load_description()
+    +setup()
+}
+
+class UrdfGenerator
+class SdfGenerator
+class WomGenerator
+
+AbstractRobotFormatGenerator <|-- UrdfGenerator
+AbstractRobotFormatGenerator <|-- SdfGenerator
+AbstractRobotFormatGenerator <|-- WomGenerator
+
+
+@enduml

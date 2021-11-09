@@ -4,12 +4,13 @@ import time
 from textx import metamodel_from_str, get_children_of_type
 from lxml import etree
 
-
-from rei_dsl_node import Robot, robot_to_urdf, instantiate_template, load_robot_from_file
-
+from generator_urdf import UrdfGenerator
 
 def main():
-    robot, urdf = load_robot_from_file("./robots/diff_robot.robot")
+    generator = UrdfGenerator()
+    generator.setup()
+    generator.load_description("./robots/diff_robot.robot")
+    generator.save_format_to_file("temp.urdf")
     physicsClient = pb.connect(pb.GUI)
     pb.setAdditionalSearchPath(pybullet_data.getDataPath())
     pb.setGravity(0, 0, -10)
@@ -19,6 +20,7 @@ def main():
     robot_urdf = pb.loadURDF("temp.urdf", startPos, startOrientation)
     cnt_jnt = pb.getNumJoints(robot_urdf)
     print(f"Number of joints: {cnt_jnt}")
+    robot = generator.robot
     print(robot.controlled_joints)
     for j in range(cnt_jnt):
         jnt_name = pb.getJointInfo(robot_urdf, j)[1].decode("UTF-8")

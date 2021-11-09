@@ -1,0 +1,62 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+mainframe **class** Kinematic tree elements
+
+class Translate {
+    -x: double
+    -y: double
+    -z: double
+}
+
+class Rotation {
+    -roll: double
+    -pitch: double
+    -yaw: double
+}
+
+class Transform {
+
+}
+
+Transform *-- "1" Translate: translate
+Transform *-- "1" Rotation: rotation
+
+class KinematicLink {
+    -name: String
+    -body: BodyElement
+    -inertia: InertiaElement
+    -children_links: dict{string, {KinematicJoint, KinematicLink}}
+    -parent_link: {KinematicLink}
+    +add_child(jnt: KinematicJoint)
+    +add_parent(jnt: KinematicJoint)
+}
+
+class KinematicJoint {
+    -name: String
+    -joint_type: JointType
+    -control_type: JointControlType
+    -limit: JointLimit
+    +set_joint_idx(i: int)
+}
+
+class JointLimit {
+    -limit_lower: double
+    -limit_upper: double
+}
+
+enum JointType {
+    FIXED, REVOLUTE, PRISMATIC, SPHERICAL, COINTNUOUS
+}
+
+enum JointControlType {
+    POSITION, VELOCITY, TORQUE
+}
+
+KinematicJoint "1" -- "parent" KinematicLink
+KinematicJoint -- "child" KinematicLink
+KinematicJoint -- "axis" Translate
+KinematicJoint -- "origin" Transform
+KinematicJoint -- "limit" JointLimit
+
+@enduml
