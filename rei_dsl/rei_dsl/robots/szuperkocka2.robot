@@ -45,6 +45,14 @@ robot szuperkocka2
             reuse collision viz_leg_right
         }
 
+        link appendage_cylinder {
+            body visual viz_appendage_cylinder {
+                origin (0.0, 0.0, -0.6),(0.0, 0.0, 0.0)
+                cylinder(0.2, 1.2)
+            }
+            reuse collision viz_appendage_cylinder
+        }
+
         joint jnt_endbox: base_link->endbox: [1,0,0]  {
             type REVOLUTE
             origin (0.0, 0.0, 0.5),(0.0,0.0,0.0)
@@ -68,6 +76,11 @@ robot szuperkocka2
         joint jnt_leg_right: base_link->leg_right: [1,0,0]  {
             type REVOLUTE
             origin (0.0, -0.2, -0.5),(0.0,0.0,0.0)
+        }
+
+        joint jnt_appendage_cylinder: endbox->appendage_cylinder: [1,0,0] {
+            type REVOLUTE
+            origin (0.4, 0.0, 0.9),(0.0, 0.0, 0.0)
         }
     }
 }

@@ -10,7 +10,7 @@ def main():
     generator = WomGenerator()
     generator.setup()
     generator.load_description("./robots/cyberdisc.robot")
-    generator.save_format_to_file(f"{generator.robot.name}.js")
+    generator.save_format_to_file("index.js")
 
 
 if __name__ == '__main__':

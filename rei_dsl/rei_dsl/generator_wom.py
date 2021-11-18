@@ -12,110 +12,6 @@ class WomGenerator(AbstractRobotFormatGenerator):
     def __init__(self):
         super().__init__()
 
-    def geometry_utility_functions(self):
-        return f"""
-function getCubeGeometry(p1, p2, p3, p4, p5, p6, p7, p8){{
-    
-    const frontFrameSection = {{
-        material_name: 'Physics/DebugDraw/VertexDriven',
-        renderop: 'trianglestrap',
-        geometry: [
-          // REAR FACE
-          // 1-2-3
-          {{ type: 'position', arg: p1}},
-          {{ type: 'color', arg: {{ r: 0, g: 1, b: 0, a: 1 }} }},
-          {{ type: 'position', arg: p2}},
-          {{ type: 'color', arg: {{ r: 0, g: 1, b: 0, a: 1 }} }},
-          {{ type: 'position', arg: p3}},
-          {{ type: 'color', arg: {{ r: 0, g: 1, b: 0, a: 1 }} }},
-          // 1-3-4
-          {{ type: 'position', arg: p1}},
-          {{ type: 'color', arg: {{ r: 0, g: 1, b: 0, a: 1 }} }},
-          {{ type: 'position', arg: p3}},
-          {{ type: 'color', arg: {{ r: 0, g: 1, b: 0, a: 1 }} }},
-          {{ type: 'position', arg: p4}},
-          {{ type: 'color', arg: {{ r: 0, g: 1, b: 0, a: 1 }} }},
-          // FRONT FACE
-          // 5-6-7
-          {{ type: 'position', arg: p7}},
-          {{ type: 'color', arg: {{ r: 0, g: 0, b: 1, a: 1 }} }},
-          {{ type: 'position', arg: p6}},
-          {{ type: 'color', arg: {{ r: 0, g: 0, b: 1, a: 1 }} }},
-          {{ type: 'position', arg: p5}},
-          {{ type: 'color', arg: {{ r: 0, g: 0, b: 1, a: 1 }} }},
-          // 5-7-8
-          {{ type: 'position', arg: p8}},
-          {{ type: 'color', arg: {{ r: 0, g: 0, b: 1, a: 1 }} }},
-          {{ type: 'position', arg: p7}},
-          {{ type: 'color', arg: {{ r: 0, g: 0, b: 1, a: 1 }} }},
-          {{ type: 'position', arg: p5}},
-          {{ type: 'color', arg: {{ r: 0, g: 0, b: 1, a: 1 }} }},
-          // BOTTOM FACE
-          // 1-2-8
-          {{ type: 'position', arg: p8}},
-          {{ type: 'color', arg: {{ r: 1, g: 1, b: 1, a: 1 }} }},
-          {{ type: 'position', arg: p2}},
-          {{ type: 'color', arg: {{ r: 1, g: 1, b: 1, a: 1 }} }},
-          {{ type: 'position', arg: p1}},
-          {{ type: 'color', arg: {{ r: 1, g: 1, b: 1, a: 1 }} }},
-          // 1-7-8
-          {{ type: 'position', arg: p7}},
-          {{ type: 'color', arg: {{ r: 1, g: 1, b: 1, a: 1 }} }},
-          {{ type: 'position', arg: p8}},
-          {{ type: 'color', arg: {{ r: 1, g: 1, b: 1, a: 1 }} }},
-          {{ type: 'position', arg: p1}},
-          {{ type: 'color', arg: {{ r: 1, g: 1, b: 1, a: 1 }} }},
-          // LEFT FACE
-          // 1-4-6
-          {{ type: 'position', arg: p1}},
-          {{ type: 'color', arg: {{ r: 1, g: 0, b: 0, a: 1 }} }},
-          {{ type: 'position', arg: p4}},
-          {{ type: 'color', arg: {{ r: 1, g: 0, b: 0, a: 1 }} }},
-          {{ type: 'position', arg: p6}},
-          {{ type: 'color', arg: {{ r: 1, g: 0, b: 0, a: 1 }} }},
-          // 1-6-7
-          {{ type: 'position', arg: p1}},
-          {{ type: 'color', arg: {{ r: 1, g: 0, b: 0, a: 1 }} }},
-          {{ type: 'position', arg: p6}},
-          {{ type: 'color', arg: {{ r: 1, g: 0, b: 0, a: 1 }} }},
-          {{ type: 'position', arg: p7}},
-          {{ type: 'color', arg: {{ r: 1, g: 0, b: 0, a: 1 }} }},
-          // RIGHT FACE
-          // 2-3-5
-          {{ type: 'position', arg: p5}}, 
-          {{ type: 'color', arg: {{ r: 1, g: 0, b: 1, a: 1 }} }},
-          {{ type: 'position', arg: p3}}, 
-          {{ type: 'color', arg: {{ r: 1, g: 0, b: 1, a: 1 }} }},
-          {{ type: 'position', arg: p2}},
-          {{ type: 'color', arg: {{ r: 1, g: 0, b: 1, a: 1 }} }},
-          // 2-5-8
-          {{ type: 'position', arg: p8}}, 
-          {{ type: 'color', arg: {{ r: 1, g: 0, b: 1, a: 1 }} }},
-          {{ type: 'position', arg: p5}}, 
-          {{ type: 'color', arg: {{ r: 1, g: 0, b: 1, a: 1 }} }},
-          {{ type: 'position', arg: p2}},
-          {{ type: 'color', arg: {{ r: 1, g: 0, b: 1, a: 1 }} }},
-          // TOP FACE
-          // 3-4-5
-          {{ type: 'position', arg: p5}}, 
-          {{ type: 'color', arg: {{ r: 0, g: 1, b: 1, a: 1 }} }},          
-          {{ type: 'position', arg: p4}}, 
-          {{ type: 'color', arg: {{ r: 0, g: 1, b: 1, a: 1 }} }},
-          {{ type: 'position', arg: p3}},
-          {{ type: 'color', arg: {{ r: 0, g: 1, b: 1, a: 1 }} }},
-          // 4-5-6
-          {{ type: 'position', arg: p4}}, 
-          {{ type: 'color', arg: {{ r: 0, g: 1, b: 1, a: 1 }} }},
-          {{ type: 'position', arg: p5}}, 
-          {{ type: 'color', arg: {{ r: 0, g: 1, b: 1, a: 1 }} }},
-          {{ type: 'position', arg: p6}},
-          {{ type: 'color', arg: {{ r: 0, g: 1, b: 1, a: 1 }} }},
-        ]
-      }}
-    return [frontFrameSection]
-
-}}
-"""
 
     def model_to_text(self):
         return self.generate_format()
@@ -152,7 +48,9 @@ function getCubeGeometry(p1, p2, p3, p4, p5, p6, p7, p8){{
             if body.origin.rotation is not None:
                 ori = rpy_to_quaternion(deg_rad(origin.rotation.roll), deg_rad(origin.rotation.pitch), deg_rad(origin.rotation.yaw))
         if body.geometry.__class__.__name__ == "Sphere":
-            pass
+            radius = body.geometry.radius
+            subdiv = 6
+            return "'manualvisual'", f"""geom_{body_link_element.name} = rei.createSphereGeometry({radius}, {subdiv}, {{x: {pos[0]}, y: {pos[1]}, z: {pos[2]}}})"""
         elif body.geometry.__class__.__name__ == "Cube":
             w = body.geometry.x
             h = body.geometry.y
@@ -172,7 +70,7 @@ function getCubeGeometry(p1, p2, p3, p4, p5, p6, p7, p8){{
             ])
             cube_points *= 100
             return "'manualvisual'",f"""    
-    geom_{body_link_element.name} = getCubeGeometry({pos_to_json(cube_points[0])}, 
+    geom_{body_link_element.name} = rei.createCubeGeometry({pos_to_json(cube_points[0])}, 
                     {pos_to_json(cube_points[1])}, 
                     {pos_to_json(cube_points[2])},
                     {pos_to_json(cube_points[3])},
@@ -182,7 +80,11 @@ function getCubeGeometry(p1, p2, p3, p4, p5, p6, p7, p8){{
                     {pos_to_json(cube_points[7])});
 """
         elif body.geometry.__class__.__name__ == "Cylinder":
-            pass
+            radius = body.geometry.radius
+            height = body.geometry.height
+            subdiv = 24
+            return "'manualvisual'", f"""geom_{body_link_element.name} = rei.createCylinderGeometry({radius}, {height}, {subdiv}, {{x: {pos[0]}, y: {pos[1]}, z: {pos[2]}}})"""
+
         elif body.geometry.__class__.__name__ == "Mesh":
             element_type = "'mesh'"
             mesh_url = body.geometry.path
@@ -253,11 +155,14 @@ function getCubeGeometry(p1, p2, p3, p4, p5, p6, p7, p8){{
         wom_module = f"""\
 const path = require('path')
 const {{ wom }} = require('maxwhere')
+// Connection with server side
 const io = require('./socket.io.min.js');
+// REI-utilities
+const reiutilities = require('./rei_maxwhere_utilities.js');
+const rei = new reiutilities();
 
 var tickObj = null;
 
-{self.geometry_utility_functions()}    
 
 const socket = io();
 
