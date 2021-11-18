@@ -1,10 +1,9 @@
+from generator_maxwhere_component import create_maxwhere_component
 from generator_wom import WomGenerator
 
 def main():
-    generator = WomGenerator()
-    generator.setup()
-    generator.load_description("./robots/szuperkocka2.robot")
-    generator.save_format_to_file(f"index.js")
+    create_maxwhere_component("./robots/szuperkocka2.robot")
+
 
 
 if __name__ == '__main__':
