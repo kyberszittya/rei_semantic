@@ -19,3 +19,10 @@ def create_maxwhere_component(robot_desc_path: str):
 }}
 """)
         copyfile("./rei_maxwhere_utilities.js", f"./{robot.name}/rei_maxwhere_utilities.js")
+    print("Initializing NPM project")
+    if not os.path.exists(f"./{robot.name}"):
+        os.mkdir(f"{robot.name}")
+    os.chdir(f"{robot.name}")
+    os.system(f"npm init -y")
+    print("Saving socket.io")
+    os.system("npm install socketio --save")

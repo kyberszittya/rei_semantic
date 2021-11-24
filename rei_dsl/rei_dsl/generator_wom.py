@@ -156,7 +156,7 @@ class WomGenerator(AbstractRobotFormatGenerator):
 const path = require('path')
 const {{ wom }} = require('maxwhere')
 // Connection with server side
-const io = require('./socket.io.min.js');
+const io = require('socket.io');
 // REI-utilities
 const reiutilities = require('./rei_maxwhere_utilities.js');
 const rei = new reiutilities();
